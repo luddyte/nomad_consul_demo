@@ -2,4 +2,8 @@ extends layout
 
 block content
   h1= title
-  p Welcome to #{title}
+  p Welcome to #{title} on ${hostname}
+  Records so far:
+  ul
+    each row in ${rows}
+      li= row
