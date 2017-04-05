@@ -9,6 +9,7 @@ var service_port;
 var db;
 var col;
 
+// This is obviously not a recommended implementation
 function get_db() {
   consul.catalog.service.nodes('mongodb', function(err, result) {
     if (err) throw err;
@@ -19,6 +20,7 @@ function get_db() {
     console.log(`conn_string: ${mongo_conn_string}`);
     db = require('monk')(mongo_conn_string);
     db.create('timestamps');
+  });
 }
 
 // initialize DB
@@ -32,11 +34,17 @@ router.get('/', function(req, res, next) {
     //inserted docs
   }).
   then(() => {
-    col.find() //all docs
-  }).then((docs) {
+    return col.find(); //all docs
+  }).
+  then((docs) => {
     // return the first 10
-    res.render('index', { title: 'Consul Demo App', hostname: os.hostname(), rows: docs.slice(0,10) });
-  )}
+    res.render('index',
+    {
+      title: 'Consul Demo App',
+      hostname: os.hostname(),
+      rows: docs.slice(0,10)
+    });
+  })
 });
 
 module.exports = router;
