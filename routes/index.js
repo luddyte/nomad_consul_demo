@@ -12,7 +12,7 @@ var col;
 // This is obviously not a recommended implementation
 function get_db() {
   consul.catalog.service.nodes('mongodb', function(err, result) {
-    if (err) throw err;
+    if (err) throw err; // container should be restarted automatically
     service_addr = result[0].ServiceAddress;
     service_port = result[0].ServicePort;
     console.log(`Consul returned addr ${service_addr} and port ${service_port}`);
