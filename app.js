@@ -23,6 +23,29 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// get db address from consul and make it available in the routers
+// This will happen every time a route is invoked so it is not to be used
+// in production...
+app.use(function(req, res, next){
+  const consul = require('consul')();
+  var service_name = process.env.SERVICENAME ? process.env.SERVICENAME : 'mongodb';
+  consul.catalog.service.nodes(service_name, function(err, result) {
+    if (err) throw err; // container should be restarted automatically if this happens
+    service_addr = result[0].ServiceAddress;
+    service_port = result[0].ServicePort;
+    console.log(`Consul returned addr ${service_addr} and port ${service_port}`);
+    var mongo_conn_string = service_addr + ':' + service_port + '/demo'; // use demo db
+    console.log(`conn_string: ${mongo_conn_string}`);
+    db = require('monk')(mongo_conn_string);
+    db.then(() => {
+      db.create('timestamps');
+      req.db = db;
+      req.col = db.get('timestamps');
+      next();
+    })
+  });
+});
+
 app.use('/', index);
 app.use('/users', users);
 app.use('/health', health);
