@@ -2,9 +2,10 @@ extends layout
 
 block content
   h1= title
-  p Welcome to #{title} on #{hostname}.  Every time you visit this page a 
-  record is written to the database containing the hostname of the server 
-  that wrote it and a timestamp.  The last ten records are below.
-  ul
-    each row in rows
-      li= row.hostname + ' -- ' + row.timestamp
+  .row
+    .col-xs-12
+      p Welcome to #{title} on #{hostname}.  Every time you visit this page a record is written to the database containing the hostname of the server that wrote it and a timestamp.  The last ten records are below.
+  
+      ul
+        each row in rows
+          li= row.hostname + ' -- ' + row.timestamp

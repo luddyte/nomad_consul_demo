@@ -9,7 +9,7 @@ router.get('/', function(req, res, next) {
     //inserted docs
   }).
   then(() => {
-    return col.find(); //all docs
+    return col.find({}, {sort: { natural: -1 }, {limit: 10}});
   }).
   then((docs) => {
     // return the first 10
@@ -17,7 +17,8 @@ router.get('/', function(req, res, next) {
     {
       title: 'Consul Demo App',
       hostname: os.hostname(),
-      rows: docs.slice(0,10)
+      //rows: docs.slice(0,9)
+      rows: docs
     });
   })
 });
